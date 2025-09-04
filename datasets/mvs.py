@@ -153,7 +153,7 @@ class MVSDataset(Dataset):
             else:
                 img, intrinsics = self.scale_img_adaptive(img, intrinsics,
                                                           self.max_w, self.max_h)
-            imgs.append(img)
+            imgs.append(img.transpose([2, 0, 1]))
             proj_mat = np.zeros(shape=(2, 4, 4), dtype=np.float32)
             proj_mat[0, :4, :4] = extrinsics
             proj_mat[1, :3, :3] = intrinsics
@@ -165,7 +165,7 @@ class MVSDataset(Dataset):
                 depth_values = np.linspace(disp_min, disp_max,
                                            self.numdepth, dtype=np.float32)
 
-        imgs = np.stack(imgs).transpose([0, 3, 1, 2])
+        # imgs = np.stack(imgs).transpose([0, 3, 1, 2])
 
         proj_matrices = np.stack(proj_matrices)
         # 1/8 resolution
@@ -178,14 +178,21 @@ class MVSDataset(Dataset):
         stage3_pjmats = proj_matrices.copy()
         stage3_pjmats[:, 1, :2, :] = proj_matrices[:, 1, :2, :] * 0.5
         proj_matrices_ms = {
-            "stage1": torch.from_numpy(stage1_pjmats.copy()).contiguous().float(),
-            "stage2": torch.from_numpy(stage2_pjmats.copy()).contiguous().float(),
-            "stage3": torch.from_numpy(stage3_pjmats.copy()).contiguous().float(),
-            "stage4": torch.from_numpy(proj_matrices.copy()).contiguous().float(),
+            "stage1": stage1_pjmats,
+            "stage2": stage2_pjmats,
+            "stage3": stage3_pjmats,
+            "stage4": proj_matrices,
         }
 
-        imgs = torch.from_numpy(imgs.copy()).contiguous().float()
-        depth_values = torch.from_numpy(depth_values.copy()).contiguous().float()
+        # proj_matrices_ms = {
+        #     "stage1": torch.from_numpy(stage1_pjmats.copy()).contiguous().float(),
+        #     "stage2": torch.from_numpy(stage2_pjmats.copy()).contiguous().float(),
+        #     "stage3": torch.from_numpy(stage3_pjmats.copy()).contiguous().float(),
+        #     "stage4": torch.from_numpy(proj_matrices.copy()).contiguous().float(),
+        # }
+
+        # imgs = [torch.from_numpy(img.copy()).contiguous().float() for img in imgs]
+        # depth_values = torch.from_numpy(depth_values.copy()).contiguous().float()
 
         if self.dataset != "general":
             return {

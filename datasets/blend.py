@@ -104,7 +104,7 @@ class MVSDataset(Dataset):
                 '{}/rendered_depth_maps/{:0>8}.pfm'.format(scan, vid)
             )
 
-            imgs.append(self.read_img(img_filename))
+            imgs.append(self.read_img(img_filename).transpose([2, 0, 1]))
             intrinsics, extrinsics, depth_min, depth_max = self.read_cam_file(
                 proj_mat_filename
             )
@@ -139,7 +139,7 @@ class MVSDataset(Dataset):
                     "stage4": np.array((depth_ms["stage4"] >= depth_min) & (depth_ms["stage4"] <= depth_max), dtype=np.float32),
                 }
 
-        imgs = np.stack(imgs).transpose([0, 3, 1, 2])
+        # imgs = np.stack(imgs).transpose([0, 3, 1, 2])
         proj_matrices = np.stack(proj_matrices)
 
         proj_matrices = np.stack(proj_matrices)

@@ -82,8 +82,6 @@ parser.add_argument('--CostNum', nargs="+", type=int, default=[0, 4, 4],
     help='number of new samples in each diffusion timestep')
 parser.add_argument('--unet_dim', nargs="+", type=int, default=[0,16,8],
     help='timesteps')
-
-
 parser.add_argument('--conf_weight', type=float, default=1.0,
     help='weight for confidence learning')
 parser.add_argument('--min_radius', type=float, default=0.2,
@@ -134,7 +132,6 @@ def train(model, model_loss, optimizer, TrainImgLoader, TestImgLoader, EvalImgLo
         if args.lr_sche=="mslr":
             lr_scheduler.step()
 
-
         # checkpoint
         if (epoch_idx + 1) % args.save_freq == 0:
             torch.save({
@@ -160,18 +157,16 @@ def train(model, model_loss, optimizer, TrainImgLoader, TestImgLoader, EvalImgLo
                 if do_summary_image:
                     save_images(logger, 'test', image_outputs, global_step)
                 avg_test_scalars.update(scalar_outputs_test)
-            # del scalar_outputs_test
+
             save_scalars(logger, 'full_test', avg_test_scalars.mean(), global_step)
             print("final", avg_test_scalars.mean())
-    # for i in gru_loss.keys():
-    #     gru_loss[i] = 0
+
 
 def test(model, model_loss, TestImgLoader, args):
     avg_test_scalars = DictAverageMeter()
     i = 0
     print(len(TestImgLoader))
     for batch_idx, sample in enumerate(TestImgLoader):
-        # print(batch_idx)
         start_time = time.time()
         loss, scalar_outputs, image_outputs = test_sample_depth(model, model_loss, sample, args)
         scalar_outputs['time'] = time.time() - start_time
@@ -190,13 +185,12 @@ def train_sample(model, model_loss, optimizer, sample, args):
     mask_ms = sample_cuda["mask"]
     depth_values = sample_cuda["depth_values"]
 
-    # num_stage = len([int(nd) for nd in args.ndepths.split(",") if nd])
     depth_gt = depth_gt_ms
     mask = mask_ms
-    outputs = model(sample_cuda["imgs"], sample_cuda["proj_matrices"], sample_cuda["depth_values"], depth_gt_ms)
+    outputs = model(sample_cuda["imgs"], sample_cuda["proj_matrices"],
+                    sample_cuda["depth_values"], depth_gt_ms)
     outputs_depth = outputs["depth"]
     outputs_conf = outputs["conf"]
-    # iter_list = [int(e) for e in args.GRUiters.split(",")]
 
     loss, depth_loss_dict = model_loss(args, outputs_depth, outputs_conf, 
                                        depth_gt_ms, mask_ms, depth_values, 
@@ -216,25 +210,21 @@ def train_sample(model, model_loss, optimizer, sample, args):
 
     scalar_outputs = {
         "loss": loss,
-        "depth_loss": depth_loss,
-        "init_abs_depth_error": AbsDepthError_metrics(depth_initial, depth_gt["stage1"], mask["stage1"] > 0.5),
-        "abs_depth_error": AbsDepthError_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5),
-        "thres1mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 1),
-        "thres2mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 2),
-        "thres4mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 4),
-        "thres8mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 8),}
+        "final_depth_loss": depth_loss,
+        "init_abs_depth_error": AbsDepthError_metrics(depth_initial, depth_gt["stage1"],
+                                                      mask["stage1"] > 0.5),
+        "final_depth_error": AbsDepthError_metrics(depth_est, depth_gt["stage4"],
+                                                   mask["stage4"] > 0.5),
+    }
 
     for i in range(iters):
         scalar_outputs["l{}".format(i)] = depth_loss_dict["l{}".format(i)]
     image_outputs = {
-        # "depth_initial": outputs_depth[0]*mask["stage1"],
-        # "depth_est_nomask": depth_est,
         "depth_est": depth_est * mask["stage4"],
         "confidence": outputs["conf"][-1],
         "depth_est_nomask": depth_est,
         "depth_gt": sample["depth"]["stage1"],
-        #  "ref_img": sample["imgs"][:, 0]["stage1"],
-        #  "mask": sample["mask"],
+        #  "ref_img": sample["imgs"][0][0]["stage1"],
         "errormap": (depth_est - depth_gt["stage4"]).abs() * mask["stage4"],
     }
 
@@ -251,7 +241,6 @@ def test_sample_depth(model, model_loss, sample, args):
     mask_ms = sample_cuda["mask"]
     depth_values = sample_cuda["depth_values"]
 
-    # num_stage = len([int(nd) for nd in args.ndepths.split(",") if nd])
     depth_gt = depth_gt_ms
     mask = mask_ms
 
@@ -280,30 +269,22 @@ def test_sample_depth(model, model_loss, sample, args):
 
     scalar_outputs = {
         "loss": loss,
-        "depth_loss": depth_loss,
-        "init_abs_depth_error": AbsDepthError_metrics(depth_initial, depth_gt["stage1"], mask["stage1"] > 0.5),
-        "abs_depth_error": AbsDepthError_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5),
-        "thres1mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 1),
-        "thres2mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 2),
-        "thres4mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 4),
-        "thres8mm_error": Thres_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, 8),
-  
+        "final_depth_loss": depth_loss,
+        "init_abs_depth_error": AbsDepthError_metrics(depth_initial, depth_gt["stage1"],
+                                                      mask["stage1"] > 0.5),
+        "final_depth_error": AbsDepthError_metrics(depth_est, depth_gt["stage4"],
+                                                   mask["stage4"] > 0.5),
 
-        "thres2mm_abserror": AbsDepthError_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, [0, 2.0]),
-        "thres4mm_abserror": AbsDepthError_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, [2.0, 4.0]),
-        "thres8mm_abserror": AbsDepthError_metrics(depth_est, depth_gt["stage4"], mask["stage4"] > 0.5, [4.0, 8.0]),
-    
     }
     for i in range(iters):
         scalar_outputs["l{}".format(i)] = depth_loss_dict["l{}".format(i)]
 
     image_outputs = {
-        # "depth_initial": outputs_depth[0]*mask["stage1"],
         "depth_est": depth_est * mask["stage4"],
         "depth_est_nomask": depth_est,
         "confidence": outputs["conf"][-1],
         "depth_gt": sample["depth"]["stage4"],
-        #  "ref_img": sample["imgs"][:, 0]["stage1"],
+        #  "ref_img": sample["imgs"][0][0]["stage1"],
         "errormap": (depth_est - depth_gt["stage4"]).abs() * mask["stage4"]
     }
 
@@ -356,7 +337,6 @@ if __name__ == '__main__':
         model.load_state_dict(state_dict['model'], strict=False)
         optimizer.load_state_dict(state_dict['optimizer'])
         start_epoch = state_dict['epoch'] + 1
-        # start_epoch = 0
     elif args.loadckpt:
         # load checkpoint file specified by args.loadckpt
         print("loading model {}".format(args.loadckpt))
@@ -398,8 +378,6 @@ if __name__ == '__main__':
         raise NotImplementedError
 
     if args.mode == "train":
-        train(model, model_loss, optimizer, TrainImgLoader, TestImgLoader, EvalImgLoader, lr_scheduler, start_epoch, args)
-    elif args.mode == "finetune":
         train(model, model_loss, optimizer, TrainImgLoader, TestImgLoader, EvalImgLoader, lr_scheduler, start_epoch, args)
     elif args.mode == "test":
         test(model, model_loss, TestImgLoader, args)

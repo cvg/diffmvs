@@ -181,7 +181,7 @@ class SepConvGRU(nn.Module):
 def differentiable_warping(src_fea, src_proj, ref_proj, depth_values):
     """get warped source image features"""
     B = src_fea.shape[0]
-    num_depth = depth_values.shape[1]
+    num_depth, height0, width0 = depth_values.shape[1:]
     height, width = src_fea.shape[2], src_fea.shape[3]
 
     with torch.no_grad():
@@ -190,12 +190,12 @@ def differentiable_warping(src_fea, src_proj, ref_proj, depth_values):
         trans = proj[:, :3, 3:4]  # [B,3,1]
 
         y, x = torch.meshgrid(
-            [torch.arange(0, height, dtype=torch.float32, device=src_fea.device),
-            torch.arange(0, width, dtype=torch.float32, device=src_fea.device)]
+            [torch.arange(0, height0, dtype=torch.float32, device=src_fea.device),
+            torch.arange(0, width0, dtype=torch.float32, device=src_fea.device)]
         )
         y, x = y.contiguous(), x.contiguous()
 
-        y, x = y.view(height * width), x.view(height * width)
+        y, x = y.view(height0 * width0), x.view(height0 * width0)
         xyz = torch.stack((x, y, torch.ones_like(x)))  # [3, H*W]
         xyz = torch.unsqueeze(xyz, 0).repeat(B, 1, 1)  # [B, 3, H*W]
         rot_xyz = torch.matmul(rot, xyz)  # [B, 3, H*W]
@@ -210,11 +210,11 @@ def differentiable_warping(src_fea, src_proj, ref_proj, depth_values):
         proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)
 
     warped_src_fea = F.grid_sample(
-        src_fea, proj_xy.view(B, num_depth * height, width, 2),
+        src_fea, proj_xy.view(B, num_depth * height0, width0, 2),
         mode='bilinear', padding_mode='zeros', align_corners=True
     )
 
-    warped_src_fea = warped_src_fea.view(B, -1, num_depth, height, width)
+    warped_src_fea = warped_src_fea.view(B, -1, num_depth, height0, width0)
     return warped_src_fea
 
 def disp_to_depth(disp, min_depth, max_depth):

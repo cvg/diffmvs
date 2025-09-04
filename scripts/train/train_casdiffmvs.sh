@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-MVS_TRAINING="/cluster/project/cvg/fawang/mvs_training/"
+MVS_TRAINING="/DTU/"
 LOG_DIR="./checkpoints/casdiffmvs"
 if [ ! -d $LOG_DIR ]; then
     mkdir -p $LOG_DIR
@@ -23,7 +23,7 @@ python train.py --mode='train' --dataset=dtu --batch_size=4 --epochs=16 \
     --trainlist lists/dtu/train.txt --testlist lists/dtu/val.txt | tee -i $dirAndName
 
 ##BlendedMVS
-MVS_TRAINING="/cluster/project/cvg/fawang/BlendedMVS/"
+MVS_TRAINING="/BlendedMVS/"
 LOG_DIR="./checkpoints/casdiffmvs/blend"
 LOAD_CKPT="./checkpoints/casdiffmvs/model_000015.ckpt"
 if [ ! -d $LOG_DIR ]; then

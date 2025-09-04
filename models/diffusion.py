@@ -153,11 +153,10 @@ class CasDiffMVS(nn.Module):
         """Feature Extraction"""
         # torch.cuda.synchronize()
         # start_time = time.time()
-        for nview_idx in range(imgs.size(1)):
-            img = imgs[:, nview_idx]
+        for img in imgs:
             features.append(self.feature(img))
 
-        contexts = self.context(imgs[:, 0])
+        contexts = self.context(imgs[0])
         # torch.cuda.synchronize()
         # end_time = time.time()
         # print('feature, Time:{}'.format(end_time - start_time))

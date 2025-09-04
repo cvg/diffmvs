@@ -170,9 +170,9 @@ class MVSDataset(Dataset):
                 disp_max = 1 / depth_min
                 depth_values = np.linspace(disp_min, disp_max, self.ndepths, dtype=np.float32)
 
-            imgs.append(img)
+            imgs.append(img.transpose([2, 0, 1]))
 
-        imgs = np.stack(imgs).transpose([0, 3, 1, 2])
+        # imgs = np.stack(imgs).transpose([0, 3, 1, 2])
 
         proj_matrices = np.stack(proj_matrices)
         stage1_pjmats = proj_matrices.copy()

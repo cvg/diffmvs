@@ -130,7 +130,7 @@ def save_scene_depth(testlist):
             outputs = tensor2numpy(outputs)
             filenames = sample["filename"]
             cams = sample["proj_matrices"]["stage4"].numpy()
-            imgs = sample["imgs"].numpy()
+            imgs = sample["imgs"][0].numpy()
             print('Iter {}/{}, Time:{} Res:{}'.format(batch_idx, len(TestImgLoader),
                                                       end_time - start_time, imgs[0].shape))
             time_sum = time_sum + end_time - start_time
@@ -142,8 +142,8 @@ def save_scene_depth(testlist):
                 for filename, cam, img, depth_est, depth_max_, depth_min_ in zip(
                     filenames, cams, imgs, outputs["depth"][-1], depth_max, depth_min
                 ):
-                    img = img[0]  # ref view
-                    _, h, w = img.shape
+                    # img = img[0]  # ref view
+                    print(img.shape)
                     cam = cam[0]  # ref cam
 
                     depth_filename = os.path.join(args.outdir, filename.format('depth_est', '.pfm'))
@@ -173,8 +173,7 @@ def save_scene_depth(testlist):
                 for filename, cam, img, depth_est,  depth_max_, depth_min_ in zip(
                     filenames, cams, imgs, outputs["depth"][-1], depth_max, depth_min
                 ):
-                    img = img[0]  # ref view
-                    _, h, w = img.shape
+                    # img = img[0]  # ref view
                     cam = cam[0]  # ref cam
 
                     depth_filename = os.path.join(args.outdir, filename.format('depth_est', '.pfm'))
