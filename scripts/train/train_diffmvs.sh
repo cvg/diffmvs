@@ -11,7 +11,7 @@ if [ ! -d $dirAndName ]; then
 fi
 
 ##DTU
-python train.py --mode='train' --dataset=dtu --batch_size=2 --epochs=12 \
+python train.py --mode='train' --dataset=dtu --batch_size=4 --epochs=12 \
     --lr=0.001 --lr_sche onecycle \
     --logdir $LOG_DIR --trainpath=$MVS_TRAINING \
     --trainviews=5 --testviews=5 \
