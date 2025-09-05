@@ -16,7 +16,7 @@ python train.py --mode='train' --dataset=dtu --batch_size=4 --epochs=12 \
     --logdir $LOG_DIR --trainpath=$MVS_TRAINING \
     --trainviews=5 --testviews=5 \
     --numdepth=384 --numdepth_initial=48 \
-    --stage_iters 1 1 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
+    --stage_iters 1 4 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
     --min_radius 0.25 --max_radius 4 \
     --scale 0 0.5 0.0 --conf_weight 0.05 \
     --hidden_dim 0 32 0 --context_dim 32 32 0 --unet_dim 0 16 8 \
@@ -40,7 +40,7 @@ python -u train.py --mode='train' --dataset=blend --batch_size=4 --epochs=12 \
     --logdir=$LOG_DIR --trainpath=$MVS_TRAINING \
     --trainviews=9 --testviews=9 \
     --numdepth=384 --numdepth_initial=48 \
-    --stage_iters 1 1 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
+    --stage_iters 1 4 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
     --min_radius 0.25 --max_radius 4 \
     --scale 0 0.5 0.0 --conf_weight 0.05 \
     --hidden_dim 0 32 0 --context_dim 32 32 0 --unet_dim 0 16 8 \
@@ -51,7 +51,7 @@ python -u train.py --mode='train' --dataset=blend --batch_size=4 --epochs=12 \
     --logdir $LOG_DIR --trainpath=$MVS_TRAINING \
     --trainviews=9 --testviews=9 \
     --numdepth=384 --numdepth_initial=48 \
-    --stage_iters 1 1 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
+    --stage_iters 1 4 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
     --min_radius 0.25 --max_radius 4 \
     --scale 0 0.5 0.0 --conf_weight 0.05 \
     --hidden_dim 0 32 0 --context_dim 32 32 0 --unet_dim 0 16 8 \
