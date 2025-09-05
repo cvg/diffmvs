@@ -210,7 +210,7 @@ def train_sample(model, model_loss, optimizer, sample, args):
 
     scalar_outputs = {
         "loss": loss,
-        "final_depth_loss": depth_loss,
+        "depth_loss": depth_loss,
         "init_abs_depth_error": AbsDepthError_metrics(depth_initial, depth_gt["stage1"],
                                                       mask["stage1"] > 0.5),
         "final_depth_error": AbsDepthError_metrics(depth_est, depth_gt["stage4"],
@@ -269,7 +269,7 @@ def test_sample_depth(model, model_loss, sample, args):
 
     scalar_outputs = {
         "loss": loss,
-        "final_depth_loss": depth_loss,
+        "depth_loss": depth_loss,
         "init_abs_depth_error": AbsDepthError_metrics(depth_initial, depth_gt["stage1"],
                                                       mask["stage1"] > 0.5),
         "final_depth_error": AbsDepthError_metrics(depth_est, depth_gt["stage4"],
