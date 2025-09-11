@@ -23,6 +23,7 @@
 
 ## Updates
 * 11.09.2025: Releasing a new [checkpoint](https://drive.google.com/file/d/1O-Tkc9NiA2C0cqsrw0CZghUH7TUp1-pN/view?usp=sharing) for CasDiffMVS. Instead of finetuning DTU-pretrained model on BlendedMVS (a subset of BlendedMVG), we finetune it on BlendedMVG. The performance on benchmarks consistently improves without changing other hyper-parameters.
+
 |     Method     | T&T Intermediate |  T&T Advanced  |  ETH3D Training |  ETH3D Test |
 |----------------|------------------|----------------|-----------------|-------------|
 | CasDiffMVS_MVG |       66.14      |     42.00      |       77.79     |    85.99    |
