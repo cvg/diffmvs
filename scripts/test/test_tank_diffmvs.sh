@@ -9,7 +9,7 @@ if [ ! -d $OUT_DIR ]; then
 fi
 
 python test.py --dataset=tank --batch_size=1 --num_view=10 --method=diffmvs --save_depth \
-    --testpath=$TANK_TESTING  --numdepth_initial=48 --numdepth=384 \
+    --testpath=$TANK_TESTING  --numdepth_initial=96 --numdepth=384 \
     --testlist=lists/tank/intermediate.txt --loadckpt=$CKPT_FILE --outdir=$OUT_DIR \
     --scale 0.0 0.125 0.0 --sampling_timesteps 0 1 1 --ddim_eta 0 1 0 \
     --stage_iters 1 4 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
@@ -17,7 +17,7 @@ python test.py --dataset=tank --batch_size=1 --num_view=10 --method=diffmvs --sa
     --min_radius 0.25 --max_radius 4
 
 python test.py --dataset=tank --batch_size=1 --num_view=10 --method=diffmvs --save_depth \
-    --testpath=$TANK_TESTING  --numdepth_initial=48 --numdepth=384 \
+    --testpath=$TANK_TESTING  --numdepth_initial=96 --numdepth=384 \
     --testlist=lists/tank/advanced.txt --loadckpt=$CKPT_FILE --outdir=$OUT_DIR \
     --scale 0.0 0.125 0.0 --sampling_timesteps 0 1 1 --ddim_eta 0 1 0 \
     --stage_iters 1 4 0 --cost_dim_stage 4 4 0 --CostNum 0 6 0 \
