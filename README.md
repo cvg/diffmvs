@@ -2,6 +2,7 @@
 <h1>Lightweight and Accurate Multi-View Stereo with Confidence-Aware Diffusion Model</h1>
 
 <a href="https://fangjinhuawang.github.io/data/DiffMVS.pdf" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Paper-DiffMVS" alt="Paper PDF"></a>
+<a href="https://arxiv.org/abs/2509.15220"><img src="https://img.shields.io/badge/arXiv-2509.15220-b31b1b" alt="arXiv"></a>
 <a href="https://ieeexplore.ieee.org/abstract/document/11120351"><img src="https://img.shields.io/badge/IEEE-DiffMVS" alt="IEEE paper"></a>
 
 
